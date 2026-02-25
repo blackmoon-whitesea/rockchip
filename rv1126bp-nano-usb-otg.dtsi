@@ -1,0 +1,27 @@
+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+/*
+ * Copyright (c) 2025 Guangzhou EASY EAI Technology Co., Ltd.
+ */
+
+&usb_drd_dwc3 {
+	status = "okay";
+	extcon = <&usb2phy>;
+	phys = <&usb2phy_otg>;
+	phy-names = "usb2-phy";
+	maximum-speed = "high-speed";
+	snps,dis_u2_susphy_quirk;
+	snps,usb2-lpm-disable;
+	snps,usb2-gadget-lpm-disable;
+};
+
+&usb2phy {
+	status = "okay";
+};
+
+&usb2phy_otg {
+	status = "okay";
+};
+
+&usb3phy {
+	status = "okay";
+};

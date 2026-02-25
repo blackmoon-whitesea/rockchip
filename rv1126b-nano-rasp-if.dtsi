@@ -1,0 +1,117 @@
+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+/*
+ * Copyright (c) 2025 Guangzhou EASY EAI Technology Co., Ltd.
+ */
+
+&can0 {
+	assigned-clocks = <&cru CLK_CAN0>;
+	assigned-clock-rates = <200000000>;
+	pinctrl-names = "default";
+	pinctrl-0 = <&can0m1_pins>;
+	status = "disabled";
+};
+
+&i2c5 {
+	status = "okay";
+	pinctrl-0 = <&i2c5m0_pins>;
+
+	pcf85063: rtc@51 {
+		compatible = "nxp,pcf85063";
+		reg = <0x51>;
+	};
+};
+
+&pwm1_4ch_0 {
+	status = "disabled";
+	pinctrl-names = "active";
+	pinctrl-0 = <&pwm1m1_ch1_pins>;
+};
+
+&pwm1_4ch_1 {
+	status = "disabled";
+	pinctrl-names = "active";
+	pinctrl-0 = <&pwm1m1_ch0_pins>;
+};
+
+&spi0 {
+	status = "disabled";
+	max-freq = <20000000>;
+	pinctrl-names = "default";
+	pinctrl-0 = <&spi0m2_clk_pins &spi0m2_csn0_pins &spi0m2_csn1_pins>;
+
+	spi-dev@0 {
+		compatible = "rockchip,spidev";
+		reg = <0x0>;
+		spi-max-frequency = <50000000>;
+		spi-lsb-first;
+	};
+
+	spi-dev@1 {
+		compatible = "rockchip,spidev";
+		reg = <0x1>;
+		spi-max-frequency = <50000000>;
+		spi-lsb-first;
+	};
+};
+
+&spi1 {
+	status = "disabled";
+	max-freq = <20000000>;
+	pinctrl-names = "default";
+	pinctrl-0 = <&spi1m1_clk_pins &spi1m1_csn0_pins &spi1m1_csn1_pins>;
+
+	spi-dev@0 {
+		compatible = "rockchip,spidev";
+		reg = <0x0>;
+		spi-max-frequency = <50000000>;
+		spi-lsb-first;
+	};
+
+	spi-dev@1 {
+		compatible = "rockchip,spidev";
+		reg = <0x1>;
+		spi-max-frequency = <50000000>;
+		spi-lsb-first;
+	};
+};
+
+&i2c5 {
+	pinctrl-0 = <&i2c5m0_pins>;
+	status = "okay";
+};
+
+&uart4 {
+	status = "okay";
+	pinctrl-names = "default";
+	pinctrl-0 = <&uart4m2_xfer_pins &uart4_485_pins>;
+	linux,rs485-enabled-at-boot-time;
+	//rs485-rts-delay = <0x0 0>;
+	rs485-rts-active-low;
+	//rts-gpios = <&gpio5 RK_PD2 GPIO_ACTIVE_HIGH>;
+};
+
+&uart5 {
+	status = "okay";
+	pinctrl-names = "default";
+	pinctrl-0 = <&uart5m1_xfer_pins>;
+};
+
+&uart6 {
+	status = "okay";
+	pinctrl-names = "default";
+	pinctrl-0 = <&uart6m0_xfer_pins &uart6_485_pins>;
+	linux,rs485-enabled-at-boot-time;
+	//rs485-rts-delay = <0x0a 0x0a>;
+	rs485-rts-active-low;
+	//rts-gpios = <&gpio5 RK_PC0 GPIO_ACTIVE_HIGH>;
+};
+
+&uart7 {
+	status = "okay";
+	pinctrl-names = "default";
+	pinctrl-0 = <&uart7m0_xfer_pins &uart7_485_pins>;
+	linux,rs485-enabled-at-boot-time;
+	rs485-rts-delay = <0x0 0>;
+	rs485-rts-active-low;
+	rts-gpios = <&gpio5 RK_PC1 GPIO_ACTIVE_HIGH>;
+};

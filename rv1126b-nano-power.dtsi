@@ -1,0 +1,49 @@
+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+/*
+ * Copyright (c) 2025 Guangzhou EASY EAI Technology Co., Ltd.
+ */
+
+/ {
+	vcc_1v8_board: vcc-1v8-board {
+		compatible = "regulator-fixed";
+		regulator-name = "vcc_1v8_board";
+		regulator-always-on;
+		regulator-boot-on;
+		regulator-min-microvolt = <1800000>;
+		regulator-max-microvolt = <1800000>;
+		vin-supply = <&vcc_5v_board>;
+	};
+
+	vcc_3v3_board: vcc-3v3-board {
+		compatible = "regulator-fixed";
+		regulator-name = "vcc_3v3_board";
+		regulator-always-on;
+		regulator-boot-on;
+		regulator-min-microvolt = <3300000>;
+		regulator-max-microvolt = <3300000>;
+		vin-supply = <&vcc_5v_board>;
+	};
+
+	vcc_5v_board: vcc-5v-board {
+		pinctrl-names = "default";
+		pinctrl-0 = <&vcc_5v_en>;
+		compatible = "regulator-fixed";
+		regulator-name = "vcc_5v_board";
+		gpio = <&gpio0 RK_PA7 GPIO_ACTIVE_HIGH>;
+		enable-active-high;
+		regulator-always-on;
+		regulator-boot-on;
+		regulator-min-microvolt = <5000000>;
+		regulator-max-microvolt = <5000000>;
+	};
+};
+
+&pinctrl {
+	power {
+		/omit-if-no-ref/
+		vcc_5v_en: vcc_5v_en {
+			rockchip,pins =
+				<0 RK_PA7 RK_FUNC_GPIO &pcfg_pull_up>;
+		};
+	};
+};

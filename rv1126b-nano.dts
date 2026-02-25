@@ -1,0 +1,122 @@
+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+/*
+ * Copyright (c) 2025 Guangzhou EASY EAI Technology Co., Ltd.
+ */
+
+/dts-v1/;
+#include "rv1126b-eai-core-t.dtsi"
+#include "rv1126b-nano-power.dtsi"
+
+#if 1
+	#include "rv1126b-nano-usb-otg.dtsi"
+	#include "rv1126b-nano-usb-hub30.dtsi"
+#else
+	#include "rv1126b-nano-usb-case3.dtsi"
+#endif
+
+//#include "rv1126b-nano-dsi-lmo5inch.dtsi"
+
+//#include "rv1126b-nano-dsi-lmo8inch.dtsi"
+#include "rv1126b-nano-wdt-gpio.dtsi"
+#include "rv1126b-nano-adc0-keys.dtsi"
+//#include "rv1126b-nano-sai2-sound.dtsi"
+
+#if 1
+	#include "rv1126b-nano-gmac-rtl8211f.dtsi"
+#else
+	#include "rv1126b-nano-gmac-integrated-phy.dtsi"
+#endif
+
+#include "rv1126b-nano-sdmmc0-sdcard.dtsi"
+#include "rv1126b-nano-sdmmc1-nledb37.dtsi"
+
+/*
+#if 1
+	#include "rv1126b-nano-csi0-imx415.dtsi"
+	#include "rv1126b-nano-csi1-imx415.dtsi"
+#else
+	#include "rv1126b-nano-dual-nvp6188.dtsi"
+#endif
+*/
+
+#include "rv1126b-nano-rasp-if.dtsi"
+#include "rv1126b-nano-other-if.dtsi"
+
+/ {
+	model = "Rockchip RV1126B NANO V10 Board";
+	compatible = "rockchip,rv1126b-nano", "rockchip,rv1126b";
+
+};
+
+&pinctrl {
+	/* 没有对口设备节点引用的引脚，暂时放在这里引用 */
+	pinctrl-names = "default";
+	pinctrl-0 = <&mobile_rst &mobile_airplane &spk_ctl &sensor_pins>;
+
+	mygpio_set {
+		/omit-if-no-ref/
+		uart2_485_pins: uart2-485-pins {
+			rockchip,pins =
+				/* uart2_485_pin */
+				<3 RK_PA6 RK_FUNC_GPIO &pcfg_pull_none>;
+		};
+		/omit-if-no-ref/
+		uart4_485_pins: uart4-485-pins {
+			rockchip,pins =
+				/* uart4_485_pin */
+				<5 RK_PD2 RK_FUNC_GPIO &pcfg_pull_none>;
+		};
+		/omit-if-no-ref/
+		uart6_485_pins: uart6-485-pins {
+			rockchip,pins =
+				/* uart7_485_pin */
+				<5 RK_PC0 RK_FUNC_GPIO &pcfg_pull_none>;
+		};	
+		/omit-if-no-ref/
+		uart7_485_pins: uart7-485-pins {
+			rockchip,pins =
+				/* uart7_485_pin */
+				<5 RK_PC1 RK_FUNC_GPIO &pcfg_pull_none>;
+		};				
+		/omit-if-no-ref/
+		sensor_pins:sensor-pins {
+			rockchip,pins =
+				/* 24power_control_pin */	
+				<5 RK_PC3 RK_FUNC_GPIO &pcfg_output_low>,
+				/* sensor1_pin 3J4*/	
+				<5 RK_PC6 RK_FUNC_GPIO &pcfg_pull_down>,
+				/* sensor2_pin 3J2*/	
+				<5 RK_PC5 RK_FUNC_GPIO &pcfg_pull_down>,
+				/* sensor3_pin 3J5*/	
+				<3 RK_PB2 RK_FUNC_GPIO &pcfg_pull_down>,
+				/* sensor4_pin 3J6*/	
+				<3 RK_PB3 RK_FUNC_GPIO &pcfg_pull_down>,
+				/* press_pin J9*/	
+				<5 RK_PC4 RK_FUNC_GPIO &pcfg_pull_down>,
+				/* input_pin J3*/	
+				<7 RK_PB0 RK_FUNC_GPIO &pcfg_pull_down>,
+				/* input_pin J18*/	
+				<5 RK_PB2 RK_FUNC_GPIO &pcfg_pull_down>;				
+		};
+	};
+
+	mobile {
+		/omit-if-no-ref/
+		mobile_rst: mobile-rst {
+			rockchip,pins =
+				<5 RK_PA1 RK_FUNC_GPIO &pcfg_output_high>;
+		};
+		/omit-if-no-ref/
+		mobile_airplane: mobile-airplane {
+			rockchip,pins =
+				<5 RK_PA0 RK_FUNC_GPIO &pcfg_output_high>;
+		};
+	};
+	sound-card {
+		/omit-if-no-ref/
+		spk_ctl: spk-ctl {
+			rockchip,pins =
+				<0 RK_PB0 RK_FUNC_GPIO &pcfg_output_high>;
+		};
+	};
+};

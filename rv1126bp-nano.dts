@@ -1,0 +1,45 @@
+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+/*
+ * Copyright (c) 2025 Guangzhou EASY EAI Technology Co., Ltd.
+ */
+
+/dts-v1/;
+#include "rv1126bp-eai-core-t.dtsi"
+#include "rv1126bp-nano-dsi-lmo5inch.dtsi"
+#include "rv1126bp-nano-csi0-gc2053.dtsi"
+#include "rv1126bp-nano-csi1-gc2093.dtsi"
+#include "rv1126bp-nano-sdmmc0-sdcard.dtsi"
+#include "rv1126bp-nano-sdmmc1-ap6212.dtsi"
+#include "rv1126bp-nano-uarts.dtsi"
+#include "rv1126bp-nano-wdt-gpio.dtsi"
+#include "rv1126bp-nano-usb-host.dtsi"
+#include "rv1126bp-nano-usb-otg.dtsi"
+#include "rv1126bp-nano-gmac-rtl8201f.dtsi"
+
+/ {
+	model = "Rockchip RV1126B-P NANO V11 Board";
+	compatible = "rockchip,rv1126bp-nano", "rockchip,rv1126b";
+
+	vcc3v3_board: vcc3v3-board {
+		pinctrl-names = "default";
+		pinctrl-0 = <&vcc3v3_board_en>;
+		compatible = "regulator-fixed";
+		regulator-name = "vcc3v3_board";
+		gpio = <&gpio5 RK_PC1 GPIO_ACTIVE_HIGH>;
+		enable-active-high;
+		//regulator-always-on;
+		//regulator-boot-on;
+		regulator-min-microvolt = <3300000>;
+		regulator-max-microvolt = <3300000>;
+	};
+};
+
+&pinctrl {
+	power {
+		/omit-if-no-ref/
+		vcc3v3_board_en: vcc3v3_board_en {
+			rockchip,pins =
+				<5 RK_PC1 RK_FUNC_GPIO &pcfg_pull_up>;
+		};
+	};
+};

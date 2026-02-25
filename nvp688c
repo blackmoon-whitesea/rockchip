@@ -1,0 +1,6 @@
+
+else{
+
+de	v_info(&client->dev, "channel(%d) fmt(%d) -> cuinvalid(0x%x)
+                                         ch, nvp6188->cur_mode.chch_vfcl_reso[ch], reso);
+}

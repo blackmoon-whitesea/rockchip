@@ -1,0 +1,209 @@
+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+/*
+ * Copyright (c) 2025 Guangzhou EASY EAI Technology Co., Ltd.
+ */
+
+/*
+ * csi2_dphy0 -> csi0(rx0) clk0 + 4 lane
+ * csi2_dphy1 -> csi0(rx0) clk0 + 2 lane 0/1
+ * csi2_dphy2 -> csi0(rx0) clk1 + 2 lane 2/3
+ * csi2_dphy3 -> csi1(rx1) clk0 + 4 lane
+ * csi2_dphy4 -> csi1(rx1) clk0 + 2 lane 0/1
+ * csi2_dphy5 -> csi1(rx1) clk1 + 2 lane 2/3
+ */
+
+/ {
+	cam1_pwr: cam1-pwr {
+		compatible = "regulator-fixed";
+		gpio = <&gpio3 RK_PA7 GPIO_ACTIVE_HIGH>;
+		pinctrl-names = "default";
+		pinctrl-0 = <&cam1_en_pin>;
+		regulator-name = "cam1_pwr";
+		enable-active-high;
+		vin-supply = <&vcc_3v3_board>;
+	};
+};
+
+&csi2_dphy3 {
+	status = "okay";
+
+	ports {
+		#address-cells = <1>;
+		#size-cells = <0>;
+		port@0 {
+			reg = <0>;
+			#address-cells = <1>;
+			#size-cells = <0>;
+
+			csi_dphy3_input: endpoint@1 {
+				reg = <1>;
+				remote-endpoint = <&imx415_out1>;
+				data-lanes = <1 2 3 4>;
+			};
+		};
+		port@1 {
+			reg = <1>;
+			#address-cells = <1>;
+			#size-cells = <0>;
+
+			csidphy3_out: endpoint@0 {
+				reg = <0>;
+				remote-endpoint = <&mipi2_csi2_input>;
+				data-lanes = <1 2 3 4>;
+			};
+		};
+	};
+};
+
+&i2c4 {
+	status = "okay";
+	pinctrl-0 = <&i2c4m2_pins>;
+
+	imx415_1: imx415@36 {
+		status = "okay";
+		compatible = "sony,imx415";
+		reg = <0x36>;
+		clocks = <&cru CLK_MIPI1_OUT2IO>;
+		clock-names = "xvclk";
+
+		//pwdn-gpios = <&gpio4 RK_PA4 GPIO_ACTIVE_HIGH>;
+		reset-gpios = <&gpio4 RK_PA5 GPIO_ACTIVE_LOW>;
+		pinctrl-names = "default";
+		pinctrl-0 = <&cam_clk1_pins &csi1_pwdn &csi1_rst>;
+
+		avdd-supply = <&cam1_pwr>;
+		dovdd-supply = <&cam1_pwr>;
+		dvdd-supply = <&cam1_pwr>;
+
+		rockchip,camera-module-index = <1>;
+		rockchip,camera-module-facing = "back";
+		rockchip,camera-module-name = "default";
+		rockchip,camera-module-lens-name = "default";
+
+		port {
+			imx415_out1: endpoint {
+				remote-endpoint = <&csi_dphy3_input>;
+				data-lanes = <1 2 3 4>;
+			};
+		};
+	};
+};
+
+&mipi2_csi2 {
+	status = "okay";
+
+	ports {
+		#address-cells = <1>;
+		#size-cells = <0>;
+
+		port@0 {
+			reg = <0>;
+			#address-cells = <1>;
+			#size-cells = <0>;
+
+			mipi2_csi2_input: endpoint@1 {
+				reg = <1>;
+				remote-endpoint = <&csidphy3_out>;
+			};
+		};
+
+		port@1 {
+			reg = <1>;
+			#address-cells = <1>;
+			#size-cells = <0>;
+
+			mipi2_csi2_output: endpoint@0 {
+				reg = <0>;
+				remote-endpoint = <&cif_mipi_in2>;
+			};
+		};
+	};
+};
+
+&pinctrl {
+	mipi-csi {
+		/omit-if-no-ref/
+		csi1_rst: csi1_rst {
+			rockchip,pins =
+				<4 RK_PA5 RK_FUNC_GPIO &pcfg_pull_up>;
+		};
+
+		/omit-if-no-ref/
+		csi1_pwdn: csi1_pwdn {
+			rockchip,pins =
+				<4 RK_PA4 RK_FUNC_GPIO &pcfg_pull_up>;
+		};
+		/omit-if-no-ref/
+		cam1_en_pin: cam1_en_pin {
+			rockchip,pins =
+				<3 RK_PA7 RK_FUNC_GPIO &pcfg_pull_up>;
+		};
+	};
+};
+
+&rkcif {
+	status = "okay";
+};
+
+&rkcif_mipi_lvds2 {
+	status = "okay";
+
+	port {
+		cif_mipi_in2: endpoint {
+			remote-endpoint = <&mipi2_csi2_output>;
+		};
+	};
+};
+
+&rkcif_mipi_lvds2_sditf {
+	status = "okay";
+
+	port {
+		mipi_lvds2_sditf: endpoint {
+			remote-endpoint = <&isp_vir1>;
+		};
+	};
+};
+
+&rkcif_mmu {
+	status = "okay";
+};
+
+&rkisp {
+	status = "okay";
+};
+
+&rkisp_mmu {
+	status = "okay";
+};
+
+&rkisp_vir1 {
+	status = "okay";
+
+	port {
+		#address-cells = <1>;
+		#size-cells = <0>;
+
+		isp_vir1: endpoint@0 {
+			reg = <0>;
+			remote-endpoint = <&mipi_lvds2_sditf>;
+		};
+	};
+};
+
+&rkisp_vir1_sditf {
+	status = "okay";
+};
+
+&rkvpss {
+	status = "okay";
+	dvbm = <&rkdvbm>;
+};
+
+&rkvpss_mmu {
+	status = "okay";
+};
+
+&rkvpss_vir1 {
+	status = "okay";
+};

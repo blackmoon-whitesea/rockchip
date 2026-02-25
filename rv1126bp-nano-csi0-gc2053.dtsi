@@ -1,0 +1,218 @@
+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+/*
+ * Copyright (c) 2025 Guangzhou EASY EAI Technology Co., Ltd.
+ */
+
+/*
+ * csi2_dphy0 -> csi0(rx0) clk0 + 4 lane
+ * csi2_dphy1 -> csi0(rx0) clk0 + 2 lane 0/1
+ * csi2_dphy2 -> csi0(rx0) clk1 + 2 lane 2/3
+ * csi2_dphy3 -> csi1(rx1) clk0 + 4 lane
+ * csi2_dphy4 -> csi1(rx1) clk0 + 2 lane 0/1
+ * csi2_dphy5 -> csi1(rx1) clk1 + 2 lane 2/3
+ */
+
+/ {
+	csi0_avdd_dvdd: csi0_avdd_dvdd {
+		compatible = "regulator-fixed";
+		gpio = <&gpio4 RK_PA6 GPIO_ACTIVE_HIGH>;
+		pinctrl-names = "default";
+		pinctrl-0 = <&cam_en_pin>;
+		regulator-name = "csi0_avdd_dvdd";
+		enable-active-high;
+		vin-supply = <&vcc3v3_board>;
+	};
+
+	gpioleds {
+		pinctrl-names = "default";
+		pinctrl-0 = <&ir_led_io>;
+		compatible = "gpio-leds";
+
+		ir_led {
+			label = "IR-LED";
+			gpios = <&gpio5 RK_PA0 GPIO_ACTIVE_HIGH>;
+			default-state = "on";
+		};
+	};
+};
+
+&csi2_dphy0 {
+	status = "okay";
+
+	ports {
+		#address-cells = <1>;
+		#size-cells = <0>;
+		port@0 {
+			reg = <0>;
+			#address-cells = <1>;
+			#size-cells = <0>;
+
+			csi_dphy0_input: endpoint@1 {
+				reg = <1>;
+				remote-endpoint = <&gc2053_out0>;
+				data-lanes = <1 2>;
+			};
+		};
+		port@1 {
+			reg = <1>;
+			#address-cells = <1>;
+			#size-cells = <0>;
+
+			csidphy0_out: endpoint@0 {
+				reg = <0>;
+				remote-endpoint = <&mipi0_csi2_input>;
+				data-lanes = <1 2>;
+			};
+		};
+	};
+};
+
+&i2c1 {
+	status = "okay";
+	pinctrl-0 = <&i2c1m2_pins>;
+
+	gc2053: gc2053@37 {
+		compatible = "galaxycore,gc2053";
+		status = "okay";
+		reg = <0x37>;
+		clocks = <&cru CLK_MIPI0_OUT2IO>;
+		clock-names = "xvclk";
+
+		pwdn-gpios = <&gpio4 RK_PA2 GPIO_ACTIVE_LOW>;
+		reset-gpios = <&gpio4 RK_PA3 GPIO_ACTIVE_LOW>;
+		pinctrl-names = "default";
+		pinctrl-0 = <&cam_clk0_pins &csi0_rst &csi0_pwdn>;
+
+		avdd-supply = <&csi0_avdd_dvdd>;
+		dovdd-supply = <&vcc_dovdd>;
+		dvdd-supply = <&csi0_avdd_dvdd>;
+
+		rockchip,camera-module-index = <0>;
+		rockchip,camera-module-facing = "front";
+		rockchip,camera-module-name = "YT-RV1109-2-V1";
+		rockchip,camera-module-lens-name = "40IR-2MP-F20";
+		port {
+			gc2053_out0: endpoint {
+				remote-endpoint = <&csi_dphy0_input>;
+				data-lanes = <1 2>;
+			};
+		};
+	};
+};
+
+&mipi0_csi2 {
+	status = "okay";
+
+	ports {
+		#address-cells = <1>;
+		#size-cells = <0>;
+
+		port@0 {
+			reg = <0>;
+			#address-cells = <1>;
+			#size-cells = <0>;
+
+			mipi0_csi2_input: endpoint@1 {
+				reg = <1>;
+				remote-endpoint = <&csidphy0_out>;
+			};
+		};
+
+		port@1 {
+			reg = <1>;
+			#address-cells = <1>;
+			#size-cells = <0>;
+
+			mipi0_csi2_output: endpoint@0 {
+				reg = <0>;
+				remote-endpoint = <&cif_mipi_in0>;
+			};
+		};
+	};
+};
+
+&pinctrl {
+	mipi-csi {
+		/omit-if-no-ref/
+		csi0_rst: csi0_rst {
+			rockchip,pins =
+				<4 RK_PA3 RK_FUNC_GPIO &pcfg_pull_up>;
+		};
+
+		/omit-if-no-ref/
+		csi0_pwdn: csi0_pwdn {
+			rockchip,pins =
+				<4 RK_PA2 RK_FUNC_GPIO &pcfg_pull_up>;
+		};
+
+		/omit-if-no-ref/
+		cam_en_pin: cam_en_pin {
+			rockchip,pins =
+				<4 RK_PA6 RK_FUNC_GPIO &pcfg_pull_up>;
+		};
+
+		/omit-if-no-ref/
+		ir_led_io: ir-led-io {
+			rockchip,pins =
+				<5 RK_PA0 RK_FUNC_GPIO &pcfg_pull_up>;
+		};
+	};
+};
+
+&rkcif {
+	status = "okay";
+};
+
+&rkcif_mipi_lvds {
+	status = "okay";
+
+	port {
+		cif_mipi_in0: endpoint {
+			remote-endpoint = <&mipi0_csi2_output>;
+		};
+	};
+};
+
+&rkcif_mipi_lvds_sditf {
+	status = "okay";
+
+	port {
+		mipi_lvds_sditf: endpoint {
+			remote-endpoint = <&isp_vir0>;
+		};
+	};
+};
+
+&rkcif_mmu {
+	status = "okay";
+};
+
+&rkisp {
+	status = "okay";
+};
+
+&rkisp_mmu {
+	status = "okay";
+};
+
+&rkisp_vir0 {
+	status = "okay";
+
+	port {
+		#address-cells = <1>;
+		#size-cells = <0>;
+
+		isp_vir0: endpoint@0 {
+			reg = <0>;
+			remote-endpoint = <&mipi_lvds_sditf>;
+		};
+	};
+};
+
+&rkisp_vir0_sditf {
+	status = "okay";
+};
+
+&rkvpss_vir0 {
+	status = "okay";
+};
