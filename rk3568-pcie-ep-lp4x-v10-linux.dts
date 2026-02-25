@@ -568,7 +568,9 @@
 &uart4 {
 	status = "okay";
 	pinctrl-names = "default";
-	pinctrl-0 = <&uart4m0_xfer &uart4m0_ctsn &uart4m0_rtsn>;
+	pinctrl-0 = <&uart4m0_xfer &uart4m0_rtsn>;
+	linux,rs485-enabled-at-boot-time;
+	rs485-rts-active-low;
 };
 
 &uart7 {

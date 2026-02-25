@@ -11,12 +11,16 @@
 
 &uart4 {
 	pinctrl-names = "default";
-	pinctrl-0 = <&uart4m2_xfer_pins>;
+	pinctrl-0 = <&uart4m2_xfer_pins &uart4m2_rtsn_pins>;
+	linux,rs485-enabled-at-boot-time;
+	rs485-rts-active-low;
 	status = "okay";
 };
 
 &uart5 {
 	pinctrl-names = "default";
-	pinctrl-0 = <&uart5m2_xfer_pins>;
+	pinctrl-0 = <&uart5m2_xfer_pins &uart5m2_rtsn_pins>;
+	linux,rs485-enabled-at-boot-time;
+	rs485-rts-active-low;
 	status = "okay";
 };
